@@ -4,6 +4,8 @@
 node_modules
 /dist
 package-lock.json
+artifacts-zk
+cache-zk
 
 # local env files
 .env.local
