@@ -4,6 +4,7 @@
 node_modules
 /dist
 package-lock.json
+yarn.lock
 artifacts-zk
 cache-zk
 

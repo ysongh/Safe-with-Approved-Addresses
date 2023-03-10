@@ -39,7 +39,7 @@
 
     <v-main>
       <v-container>
-        <h1>Safe with Approved Addresses</h1>
+        <router-view/>
       </v-container>
     </v-main>
   </v-app>
