@@ -24,7 +24,7 @@
       color="green"
        @click="initializeProviderAndSigner()"
     >
-      Connect
+      {{ formatWalletAddress(walletAddress) }}
     </v-btn>
 
     <v-btn
@@ -38,15 +38,20 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: "Navbar",
   data: () => ({
     loading: false
   }),
+  computed: mapGetters(['walletAddress']),
   methods: {
-    ...mapActions(['initializeProviderAndSigner'])
+    ...mapActions(['initializeProviderAndSigner']),
+    formatWalletAddress(address) {
+      if(address) return address.slice(0, 5) + "..." + address.slice(37, 42)
+      else return "Connect Wallet"
+    },
   }
 }
 </script>

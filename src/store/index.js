@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import { Contract, Web3Provider, Provider } from "zksync-web3";
-import {} from "ethers";
+import { ethers } from "ethers";
 
 import Greeter from '../../artifacts-zk/contracts/Greeter.sol/Greeter.json'
 
@@ -12,17 +12,24 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    contract: ""
+    contract: "",
+    walletAddress: ""
   },
   getters: {
-    contract: state => state.contract
+    contract: state => state.contract,
+    walletAddress: state => state.walletAddress,
   },
   mutations: {
-    setContract: (state, contract) => (state.contract = contract)
+    setContract: (state, contract) => (state.contract = contract),
+    setWalletAddress: (state, walletAddress) => (state.walletAddress = walletAddress)
   },
   actions: {
     async initializeProviderAndSigner({ commit }) {
       try{
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        const account = ethers.utils.getAddress(accounts[0])
+        commit('setWalletAddress', account)
+
         const provider = new Provider('https://zksync2-testnet.zksync.dev');
 
         // Note that we still need to get the Metamask signer
