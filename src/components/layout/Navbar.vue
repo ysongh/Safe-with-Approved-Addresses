@@ -13,6 +13,10 @@
       Home
     </router-link>
 
+    <router-link :to="{ path: '/dashboard'}" class="nav-link">
+      Dashboard
+    </router-link>
+
     <router-link :to="{ path: '/about'}" class="nav-link">
       About
     </router-link>
