@@ -17,6 +17,10 @@
       Dashboard
     </router-link>
 
+    <router-link :to="{ path: '/search'}" class="nav-link">
+      Search
+    </router-link>
+
     <router-link :to="{ path: '/about'}" class="nav-link">
       About
     </router-link>
