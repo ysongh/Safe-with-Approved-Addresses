@@ -5,18 +5,17 @@ import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
 
 // An example of a deploy script that will deploy and call a simple contract.
 export default async function (hre: HardhatRuntimeEnvironment) {
-  console.log(`Running deploy script for the Greeter contract`);
+  console.log(`Running deploy script for the AAFactory contract`);
 
   // Initialize the wallet.
   const wallet = new Wallet("<WALLET-PRIVATE-KEY>");
 
   // Create deployer object and load the artifact of the contract you want to deploy.
   const deployer = new Deployer(hre, wallet);
-  const artifact = await deployer.loadArtifact("Greeter");
+  const artifact = await deployer.loadArtifact("AAFactory");
 
   // Estimate contract deployment fee
-  const greeting = "Hi contracts!";
-  const deploymentFee = await deployer.estimateDeployFee(artifact, [greeting]);
+  const deploymentFee = await deployer.estimateDeployFee(artifact, []);
 
   /*
   // OPTIONAL: Deposit funds to L2
@@ -35,12 +34,12 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   const parsedFee = ethers.utils.formatEther(deploymentFee.toString());
   console.log(`The deployment is estimated to cost ${parsedFee} ETH`);
 
-  const greeterContract = await deployer.deploy(artifact, [greeting]);
+  const AAFactoryContract = await deployer.deploy(artifact, []);
 
   //obtain the Constructor Arguments
-  console.log("constructor args:" + greeterContract.interface.encodeDeploy([greeting]));
+  console.log("constructor args:" + AAFactoryContract.interface.encodeDeploy([]));
 
   // Show the contract info.
-  const contractAddress = greeterContract.address;
+  const contractAddress = AAFactoryContract.address;
   console.log(`${artifact.contractName} was deployed to ${contractAddress}`);
 }

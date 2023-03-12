@@ -10,6 +10,7 @@ module.exports = {
   defaultNetwork: "zkSyncTestnet",
 
   networks: {
+    // yarn hardhat deploy-zksync
     zkSyncTestnet: {
       url: "https://zksync2-testnet.zksync.dev",
       ethNetwork: "goerli", // Can also be the RPC URL of the network (e.g. `https://goerli.infura.io/v3/<API_KEY>`)
