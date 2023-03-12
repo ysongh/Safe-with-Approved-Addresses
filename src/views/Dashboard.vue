@@ -42,7 +42,7 @@
       Approve
     </v-btn>
 
-    <h2 class="mt-3">Withdraw ETH</h2>
+    <h2 class="mt-3">Withdraw DAI</h2>
     <v-text-field
       v-model="amount"
       label="Amount"
@@ -50,11 +50,17 @@
       dense
       clearable
     ></v-text-field>
+     <v-btn
+      color="green"
+      @click="depositToSafe()"
+    >
+      Deposit DAI
+    </v-btn>
     <v-btn
       color="green"
-      @click="withDrawETH()"
+      @click="withDrawToken()"
     >
-      Withdraw ETH
+      Withdraw DAI
     </v-btn>
 
     <br />
@@ -64,13 +70,16 @@
       color="green"
       @click="getETHBalance()"
     >
-      Get ETH Balance
+      Get DAI Balance
     </v-btn>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { ethers } from "ethers"
+
+const DAI = "0x3e7676937a7e96cfb7616f255b9ad9ff47363d4b"
 
 export default {
   name: 'Dashboard',
@@ -79,7 +88,7 @@ export default {
     to: "",
     amount: ""
   }),
-  computed: mapGetters(['contract', 'contract2', 'walletAddress']),
+  computed: mapGetters(['contract', 'contract2', 'walletAddress', 'userSigner']),
   methods: {
     ...mapActions(['setSafeAddress']),
     async createSafe() {
@@ -113,9 +122,18 @@ export default {
           alert(JSON.stringify(e));
       }
     },
-   async withDrawETH() {
+    async depositToSafe() {
+      const transferHandle = await this.userSigner.transfer({
+        to: this.safeAddress,
+        token: DAI,
+        amount: ethers.utils.parseEther(this.amount)
+      });
+
+      console.log(transferHandle);
+    },
+   async withDrawToken() {
       try {
-          const txHandle = await this.contract2.withdrawETH();
+          const txHandle = await this.contract2.withdrawTokenfromSafe(ethers.utils.parseEther(this.amount), DAI);
 
           // Wait until the transaction is committed
           await txHandle.wait();
