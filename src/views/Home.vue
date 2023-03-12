@@ -7,28 +7,51 @@
     >
       Connect
     </v-btn>
-    <p>{{ this.greeting }}</p>
+    <p>{{ this.safeAddress }}</p>
+
     <v-btn
       color="green"
-      @click="getGreeting()"
+      @click="getSafeAddress()"
     >
-      Get Greeting
+      Get Safe Address
     </v-btn>
 
-    <v-text-field
-      class="mt-5"
-      v-model="text"
-      label="New Greeting"
-      outlined
-      dense
-      clearable
-    ></v-text-field>
+    <v-btn
+      color="green"
+      @click="createSafe()"
+    >
+      Create Safe
+    </v-btn>
+
+    <br />
+    <br />
+
+    <v-btn
+      color="green"
+      @click="getETHBalance()"
+    >
+      Get ETH Balance
+    </v-btn>
+
+    <v-btn
+      color="green"
+      @click="isAddressApprove()"
+    >
+      isAddressApprove
+    </v-btn>
 
      <v-btn
       color="green"
-      @click="changeGreeting()"
+      @click="approveAddress()"
     >
-      Change Greeting
+      approveAddress
+    </v-btn>
+
+     <v-btn
+      color="green"
+      @click="withDrawETH()"
+    >
+      withDrawETH
     </v-btn>
   </div>
 </template>
@@ -39,24 +62,49 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'Home',
   data: () => ({
-    greeting: "",
-    text: ""
+    safeAddress: "",
   }),
-  computed: mapGetters(['contract']),
+  computed: mapGetters(['contract', 'contract2', 'walletAddress']),
   methods: {
-    ...mapActions(['initializeProviderAndSigner']),
-    async getGreeting() {
-       this.greeting = await this.contract.greet()
+    ...mapActions(['initializeProviderAndSigner', 'setSafeAddress']),
+    async getSafeAddress() {
+       this.safeAddress = await this.contract.getSafeContract()
+       this.setSafeAddress("")
     },
-    async changeGreeting() {
+    async createSafe() {
       try {
-          const txHandle = await this.contract.setGreeting(this.text);
+          const txHandle = await this.contract.createSafe();
 
           // Wait until the transaction is committed
           await txHandle.wait();
+      } catch (e) {
+          alert(JSON.stringify(e));
+      }
+    },
+    async getETHBalance() {
+       const balance = await this.contract2.getETHBalance()
+       alert(balance);
+    },
+    async isAddressApprove() {
+       const a = await this.contract2.isAddressApprove(this.walletAddress)
+       alert(a);
+    },
+    async approveAddress() {
+      try {
+          const txHandle = await this.contract2.approveAddress(this.walletAddress);
 
-          // Update greeting
-          this.greeting = await this.contract.greet();
+          // Wait until the transaction is committed
+          await txHandle.wait();
+      } catch (e) {
+          alert(JSON.stringify(e));
+      }
+    },
+   async withDrawETH() {
+      try {
+          const txHandle = await this.contract2.withdrawETH();
+
+          // Wait until the transaction is committed
+          await txHandle.wait();
       } catch (e) {
           alert(JSON.stringify(e));
       }
