@@ -35,7 +35,7 @@ contract AddressApprove {
 
     function withdrawTokenfromSafe(uint _tokenAmount, address _tokenAddress) external onlyApprove {
         IERC20 token = IERC20(_tokenAddress);
-        require(token.transfer(owner, _tokenAmount), "Unable to transfer");    
+        require(token.transfer(msg.sender, _tokenAmount), "Unable to transfer");    
     }
 
     function withdrawETH() external onlyApprove {
