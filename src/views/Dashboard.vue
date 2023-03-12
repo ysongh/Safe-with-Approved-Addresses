@@ -11,74 +11,78 @@
       Create Safe
     </v-btn>
 
+    <div v-if="safeAddress !== '0x0000000000000000000000000000000000000000'">
     <h2>Check Approve</h2>
-    <v-text-field
-      v-model="to"
-      label="To"
-      outlined
-      dense
-      clearable
-    ></v-text-field>
-    <v-btn
-      color="green"
-      @click="isAddressApprove()"
-    >
-      Check
-    </v-btn>
+      <v-text-field
+        v-model="to"
+        label="To"
+        outlined
+        dense
+        clearable
+      ></v-text-field>
+      <v-btn
+        color="green"
+        @click="isAddressApprove()"
+      >
+        Check
+      </v-btn>
 
 
-    <h2 class="mt-3">Approve Address</h2>
-    <v-text-field
-      v-model="to"
-      label="To"
-      outlined
-      dense
-      clearable
-    ></v-text-field>
-    <v-btn
-      color="green"
-      @click="approveAddress()"
-    >
-      Approve
-    </v-btn>
+      <h2 class="mt-3">Approve Address</h2>
+      <v-text-field
+        v-model="to"
+        label="To"
+        outlined
+        dense
+        clearable
+      ></v-text-field>
+      <v-btn
+        color="green"
+        @click="approveAddress()"
+      >
+        Approve
+      </v-btn>
 
-    <h2 class="mt-3">Withdraw DAI</h2>
-    <v-text-field
-      v-model="amount"
-      label="Amount"
-      outlined
-      dense
-      clearable
-    ></v-text-field>
-     <v-btn
-      color="green"
-      @click="depositToSafe()"
-    >
-      Deposit DAI
-    </v-btn>
-    <v-btn
-      color="green"
-      @click="withDrawToken()"
-    >
-      Withdraw DAI
-    </v-btn>
+      <h2 class="mt-3">{{ this.balance / 10 ** 18 }} DAI</h2>
+      <v-text-field
+        v-model="amount"
+        label="Amount"
+        outlined
+        dense
+        clearable
+      ></v-text-field>
+      <v-btn
+        color="green"
+        @click="depositToSafe()"
+      >
+        Deposit DAI
+      </v-btn>
+      <v-btn
+        color="green"
+        @click="withDrawToken()"
+      >
+        Withdraw DAI
+      </v-btn>
 
-    <br />
-    <br />
+      <br />
+      <br />
 
-    <v-btn
-      color="green"
-      @click="getETHBalance()"
-    >
-      Get DAI Balance
-    </v-btn>
+      <v-btn
+        color="green"
+        @click="getETHBalance()"
+      >
+        Get DAI Balance
+      </v-btn>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Provider } from "zksync-web3";
 import { ethers } from "ethers"
 
+const provider = new Provider('https://zksync2-testnet.zksync.dev');
 const DAI = "0x3e7676937a7e96cfb7616f255b9ad9ff47363d4b"
 
 export default {
@@ -86,7 +90,8 @@ export default {
   data: () => ({
     safeAddress: "",
     to: "",
-    amount: ""
+    amount: "",
+    balance: ""
   }),
   computed: mapGetters(['contract', 'contract2', 'walletAddress', 'userSigner']),
   methods: {
@@ -129,6 +134,9 @@ export default {
         amount: ethers.utils.parseEther(this.amount)
       });
 
+      const balanceInUnits = await provider.getBalance(this.safeAddress, "latest", DAI);
+      this.balance = balanceInUnits
+
       console.log(transferHandle);
     },
    async withDrawToken() {
@@ -137,6 +145,9 @@ export default {
 
           // Wait until the transaction is committed
           await txHandle.wait();
+
+          const balanceInUnits = await provider.getBalance(this.safeAddress, "latest", DAI);
+          this.balance = balanceInUnits
       } catch (e) {
           alert(JSON.stringify(e));
       }
@@ -146,6 +157,9 @@ export default {
     try{
       this.safeAddress = await this.contract.getSafeContract()
       this.setSafeAddress(this.safeAddress)
+
+      const balanceInUnits = await provider.getBalance(this.safeAddress, "latest", DAI);
+      this.balance = balanceInUnits
     } catch(error) {
       console.log(error)
     }

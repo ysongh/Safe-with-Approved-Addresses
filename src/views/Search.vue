@@ -32,7 +32,7 @@
           Check
         </v-btn>
 
-       <h2 class="mt-3">Withdraw DAI</h2>
+        <h2 class="mt-3">{{ this.balance / 10 ** 18 }} DAI</h2>
         <v-text-field
           v-model="amount"
           label="Amount"
@@ -58,8 +58,10 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+import { Provider } from "zksync-web3";
 import { ethers } from "ethers"
 
+const provider = new Provider('https://zksync2-testnet.zksync.dev');
 const DAI = "0x3e7676937a7e96cfb7616f255b9ad9ff47363d4b"
 
 export default {
@@ -67,7 +69,8 @@ export default {
   data: () => ({
     address: "",
     to: "",
-    amount: ""
+    amount: "",
+    balance: ""
   }),
   computed: mapGetters(['contract', 'contract2', 'walletAddress', 'userSigner']),
   methods: {
@@ -75,6 +78,8 @@ export default {
     async searchSafe() {
       try{
         this.setSafeAddress(this.address)
+        const balanceInUnits = await provider.getBalance(this.address, "latest", DAI);
+        this.balance = balanceInUnits
       } catch(error) {
         console.log(error)
       }
@@ -91,6 +96,9 @@ export default {
       });
 
       console.log(transferHandle);
+
+      const balanceInUnits = await provider.getBalance(this.address, "latest", DAI);
+      this.balance = balanceInUnits
     },
     async withDrawToken() {
       try {
@@ -98,6 +106,9 @@ export default {
 
           // Wait until the transaction is committed
           await txHandle.wait();
+
+          const balanceInUnits = await provider.getBalance(this.address, "latest", DAI);
+          this.balance = balanceInUnits
       } catch (e) {
           alert(JSON.stringify(e));
       }
