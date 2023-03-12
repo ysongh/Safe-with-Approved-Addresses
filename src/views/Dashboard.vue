@@ -1,12 +1,6 @@
 <template>
   <div class="home">
     <h1>Safe with Approved Addresses</h1>
-    <v-btn
-      color="green"
-      @click="initializeProviderAndSigner()"
-    >
-      Connect
-    </v-btn>
     <p>{{ this.safeAddress }}</p>
 
     <v-btn
@@ -66,7 +60,7 @@ export default {
   }),
   computed: mapGetters(['contract', 'contract2', 'walletAddress']),
   methods: {
-    ...mapActions(['initializeProviderAndSigner', 'setSafeAddress']),
+    ...mapActions(['setSafeAddress']),
     async getSafeAddress() {
        this.safeAddress = await this.contract.getSafeContract()
        this.setSafeAddress("")
