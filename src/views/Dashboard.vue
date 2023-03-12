@@ -1,20 +1,60 @@
 <template>
   <div class="home">
-    <h1>Safe with Approved Addresses</h1>
-    <p>{{ this.safeAddress }}</p>
+    <h1>Dashboard</h1>
+    <p>Your Safe Address {{ this.safeAddress }}</p>
 
     <v-btn
-      color="green"
-      @click="getSafeAddress()"
-    >
-      Get Safe Address
-    </v-btn>
-
-    <v-btn
+      v-if="safeAddress === '0x0000000000000000000000000000000000000000'"
       color="green"
       @click="createSafe()"
     >
       Create Safe
+    </v-btn>
+
+    <h2>Check Approve</h2>
+    <v-text-field
+      v-model="to"
+      label="To"
+      outlined
+      dense
+      clearable
+    ></v-text-field>
+    <v-btn
+      color="green"
+      @click="isAddressApprove()"
+    >
+      Check
+    </v-btn>
+
+
+    <h2 class="mt-3">Approve Address</h2>
+    <v-text-field
+      v-model="to"
+      label="To"
+      outlined
+      dense
+      clearable
+    ></v-text-field>
+    <v-btn
+      color="green"
+      @click="approveAddress()"
+    >
+      Approve
+    </v-btn>
+
+    <h2 class="mt-3">Withdraw ETH</h2>
+    <v-text-field
+      v-model="amount"
+      label="Amount"
+      outlined
+      dense
+      clearable
+    ></v-text-field>
+    <v-btn
+      color="green"
+      @click="withDrawETH()"
+    >
+      Withdraw ETH
     </v-btn>
 
     <br />
@@ -26,27 +66,6 @@
     >
       Get ETH Balance
     </v-btn>
-
-    <v-btn
-      color="green"
-      @click="isAddressApprove()"
-    >
-      isAddressApprove
-    </v-btn>
-
-     <v-btn
-      color="green"
-      @click="approveAddress()"
-    >
-      approveAddress
-    </v-btn>
-
-     <v-btn
-      color="green"
-      @click="withDrawETH()"
-    >
-      withDrawETH
-    </v-btn>
   </div>
 </template>
 
@@ -57,20 +76,21 @@ export default {
   name: 'Dashboard',
   data: () => ({
     safeAddress: "",
+    to: "",
+    amount: ""
   }),
   computed: mapGetters(['contract', 'contract2', 'walletAddress']),
   methods: {
     ...mapActions(['setSafeAddress']),
-    async getSafeAddress() {
-       this.safeAddress = await this.contract.getSafeContract()
-       this.setSafeAddress("")
-    },
     async createSafe() {
       try {
           const txHandle = await this.contract.createSafe();
 
           // Wait until the transaction is committed
           await txHandle.wait();
+
+          this.safeAddress = await this.contract.getSafeContract()
+          this.setSafeAddress(this.safeAddress)
       } catch (e) {
           alert(JSON.stringify(e));
       }
@@ -80,12 +100,12 @@ export default {
        alert(balance);
     },
     async isAddressApprove() {
-       const a = await this.contract2.isAddressApprove(this.walletAddress)
+       const a = await this.contract2.isAddressApprove(this.to)
        alert(a);
     },
     async approveAddress() {
       try {
-          const txHandle = await this.contract2.approveAddress(this.walletAddress);
+          const txHandle = await this.contract2.approveAddress(this.to);
 
           // Wait until the transaction is committed
           await txHandle.wait();
@@ -103,6 +123,14 @@ export default {
           alert(JSON.stringify(e));
       }
     },
+  },
+  async created() {
+    try{
+      this.safeAddress = await this.contract.getSafeContract()
+      this.setSafeAddress(this.safeAddress)
+    } catch(error) {
+      console.log(error)
+    }
   }
 }
 </script>
