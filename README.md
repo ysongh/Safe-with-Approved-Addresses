@@ -1,4 +1,5 @@
-# safe-with-approved-addresses
+# Shareable Smart Wallet
+A smart wallet where you can share your funds with your friends or family
 
 ## Project setup
 ```
